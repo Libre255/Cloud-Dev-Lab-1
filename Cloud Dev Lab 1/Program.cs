@@ -1,68 +1,50 @@
 ﻿using System.Numerics;
 using static System.Console;
 
-//Loop only Numbers 
-//Search first duplicate number
-//and mark all the numbers in between including the searching number
-//Then output all the numbers with the marked numbers
-
-//if during searching a number the loop finds anything other than a number
-//Then stop searching with that number and start searching with the next number
-
-// Dont print the loops that didnt find:
-//Duplicate numbers Or were canseled because of a letter (or other than a number)
-
 char[] Approved_Numbers = { '1','2','3','4','5','6','7','8','9','0'};
 
 string testInput = "29535123p48723487597645723645";
 
-
-void SearchSecondaryNumber(string Input)
+List<List<int>> SearchAllTheIndexOfTheMarkedNumbers(string Input)
 {
-    List<List<int>> ListOfAllTheMarkedNrsIndex = new();
+    List<List<int>> AllTheListsOfMarkedNumbersIndexes = new();
     
-    //Looping Input
-    for(int ST = 0; ST < Input.Length; ST++)
+    for(int STIndex = 0; STIndex < Input.Length; STIndex++)
     {
-        char SearchTarget = Input[ST];
-        //Checked if SearchTarget is a number
+        char SearchTarget = Input[STIndex];
         if (Approved_Numbers.Contains(SearchTarget))
         {
-            //Begin searching equal number starting after SearchTarget
-            for(int ET = (ST+1); ET < Input.Length; ET++)
+            for(int ETIndex = (STIndex+1); ETIndex < Input.Length; ETIndex++)
             {
-                char EqualTarget = Input[ET];
-                //Check if EqualTarget is a number if not then finish loop
+                char EqualTarget = Input[ETIndex];
                 if (Approved_Numbers.Contains(EqualTarget))
                 {
-                    //If i find the second number equal to SearchTarget
                     if (SearchTarget == EqualTarget)
                     {
-                        //Creat a list for all numbers inbetween (and including) SearchTarget and EqualTarget 
                         List<int> ListOfIndexMarkedNrs = new();
-                        for(int IndexOfMarkedNr = ST; IndexOfMarkedNr <= ET; IndexOfMarkedNr++)
+                        for(int IndexOfMarkedNr = STIndex; IndexOfMarkedNr <= ETIndex; IndexOfMarkedNr++)
                         {
                             ListOfIndexMarkedNrs.Add(IndexOfMarkedNr);
                         }
-                        //Add marked numbers to ListOfMatchedNumbers
-                        ListOfAllTheMarkedNrsIndex.Add(ListOfIndexMarkedNrs);
-                        ET = Input.Length;
+                        AllTheListsOfMarkedNumbersIndexes.Add(ListOfIndexMarkedNrs);
+                        ETIndex = Input.Length;
                     }
                 }
-                else
-                {
-                    ET = Input.Length;
+                else { 
+                    ETIndex = Input.Length;
                 }
-
             }
         }
     }
 
-    WriteLine("[ Marked Numbers ]");
-    foreach (List<int> ListOfMarkedNrs_Index in ListOfAllTheMarkedNrsIndex)
+    return AllTheListsOfMarkedNumbersIndexes;
+}
+
+void PrintAllTheMarkedNumbersWithColorGreen(string Input, List<List<int>> AllTheListOfMarkedNrsIndexes)
+{
+    foreach (List<int> ListOfMarkedNrs_Index in AllTheListOfMarkedNrsIndexes)
     {
-        WriteLine(" ");
-        for(int i = 0; i < Input.Length; i++)
+        for (int i = 0; i < Input.Length; i++)
         {
             if (ListOfMarkedNrs_Index.Contains(i))
             {
@@ -74,23 +56,32 @@ void SearchSecondaryNumber(string Input)
             }
             Write(Input[i]);
         }
+        WriteLine(" ");
+
     }
     ForegroundColor = ConsoleColor.White;
-    
-    WriteLine("  ");
-    WriteLine("  ");
-    WriteLine("[ Total Sum ] ");
-    IEnumerable<BigInteger> ConvertAllIndexInto_InputValues_IntFormat = ListOfAllTheMarkedNrsIndex
-                        .Select(IndexOfMakredNrs => 
+}
+
+BigInteger SumTheTotalOfAllTheMarkedNumbers(string Input, List<List<int>> AllTheListOfMarkedNrsIndexes)
+{
+    IEnumerable<BigInteger> ConvertAllIndexInto_InputValues_IntFormat = AllTheListOfMarkedNrsIndexes
+                        .Select(IndexOfMakredNrs =>
                                     BigInteger.Parse(new string(IndexOfMakredNrs
                                                             .Select(Inputindex => Input[Inputindex])
-                                                            .ToArray() ) ) );
+                                                            .ToArray())));
     BigInteger TotalSum = 0;
-    foreach(BigInteger MarkedNumbers in ConvertAllIndexInto_InputValues_IntFormat)
+    foreach (BigInteger MarkedNumbers in ConvertAllIndexInto_InputValues_IntFormat)
     {
         TotalSum += MarkedNumbers;
     }
-    WriteLine(TotalSum);
+    return TotalSum;
 }
 
-SearchSecondaryNumber(testInput);
+WriteLine("Insert your input:");
+string UserInput = ReadLine();
+List<List<int>> ResultOfMarkedNrsIndex = SearchAllTheIndexOfTheMarkedNumbers(UserInput);
+WriteLine("\n[ Marked Numbers ]");
+PrintAllTheMarkedNumbersWithColorGreen(UserInput, ResultOfMarkedNrsIndex);
+BigInteger TheSumOfAllTheMarkedNrs = SumTheTotalOfAllTheMarkedNumbers(UserInput, ResultOfMarkedNrsIndex);
+WriteLine("\n[ Total Sum ] ");
+WriteLine(TheSumOfAllTheMarkedNrs);
