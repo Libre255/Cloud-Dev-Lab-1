@@ -3,8 +3,6 @@ using static System.Console;
 
 char[] Approved_Numbers = { '1','2','3','4','5','6','7','8','9','0'};
 
-string testInput = "29535123p48723487597645723645";
-
 List<List<int>> SearchAllTheIndexOfTheMarkedNumbers(string Input)
 {
     List<List<int>> AllTheListsOfMarkedNumbersIndexes = new();
@@ -36,7 +34,6 @@ List<List<int>> SearchAllTheIndexOfTheMarkedNumbers(string Input)
             }
         }
     }
-
     return AllTheListsOfMarkedNumbersIndexes;
 }
 
@@ -57,7 +54,6 @@ void PrintAllTheMarkedNumbersWithColorGreen(string Input, List<List<int>> AllThe
             Write(Input[i]);
         }
         WriteLine(" ");
-
     }
     ForegroundColor = ConsoleColor.White;
 }
